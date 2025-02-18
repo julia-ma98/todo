@@ -1,33 +1,39 @@
 <script setup>
-// defineProps({
-//   text: {
-//     type: String,
-//     required: true,
-//   },
-// })
+defineProps({
+  items: {
+    type: Array,
+    required: true,
+  },
+})
 import { ref } from 'vue'
 // const hideInput = ref(false);
 
 </script>
 
 <template>
-  <div class="input__wrapper">
-    <div class="control">
-      <button class="button button_check"><img class="icon" src="./icons/img_3.png" alt="Галочка"></button>
-    </div>
-    <div class="input__control">
-      <input type="text" class="input__text" placeholder="напишите задачу">
-    </div>
-    <div class="control">
-      <button class="button button_up"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
-    </div>
-    <div class="control">
-      <button class="button button_down"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
-    </div>
-    <div class="control">
-      <button class="button button_delete"><img class="icon" src="./icons/img.png" alt="Крестик"></button>
+  <div class="wrapper">
+    <div v-for="item in items" v-bind:key="item.id">
+<!--      {{ item.message }}-->
+      <div class="input__wrapper">
+        <div class="control">
+          <button class="button button_check"><img class="icon" src="./icons/img_3.png" alt="Галочка"></button>
+        </div>
+        <div class="input__control">
+          <input type="text" class="input__text" placeholder="напишите задачу">
+        </div>
+        <div class="control">
+          <button class="button button_up"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
+        </div>
+        <div class="control">
+          <button class="button button_down"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
+        </div>
+        <div class="control">
+          <button class="button button_delete"><img class="icon" src="./icons/img.png" alt="Крестик"></button>
+        </div>
+      </div>
     </div>
   </div>
+
 </template>
 
 <style scoped>

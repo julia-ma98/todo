@@ -25,10 +25,10 @@ const hideInput = ref(false)
 <!--  <RouterView />-->
   <div class="container">
     <div class="input__wrapper">
-      <to-do-item />
+      <to-do-item  items="[{id: 1, name: '123'}, {id: 2, name: 'sfsdf'}]"/>
     </div>
       <div class="add">
-        <button class="button button_add" @click="hideInput = true">
+        <button class="button button_add">
           <span class="button__text">Добавить</span>
         </button>
        </div>
