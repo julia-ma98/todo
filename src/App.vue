@@ -5,7 +5,16 @@ import ToDoItem from '@/components/ToDoItem.vue'
 import ToDoView from '@/views/ToDoView.vue'
 import { ref } from 'vue'
 const todoInputs = ref([])
-const hideInput = ref(false)
+const todoItems = ref([])
+const handleAdd = () => {
+  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "asdsad", active: false}]
+}
+const handleDelete = (id) => {
+  todoItems.value = [...todoItems.value].filter((item) => item.id !== id)
+}
+const handleActive = (id) => {
+  todoItems.value = [...todoItems.value].map((item) => item.id === id ? {...item, active: !item.active} : item)
+}
 </script>
 
 <template>
@@ -24,11 +33,9 @@ const hideInput = ref(false)
 
 <!--  <RouterView />-->
   <div class="container">
-    <div class="input__wrapper">
-      <to-do-item  items="[{id: 1, name: '123'}, {id: 2, name: 'sfsdf'}]"/>
-    </div>
+      <to-do-item  :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive"/>
       <div class="add">
-        <button class="button button_add">
+        <button class="button button_add" @click="handleAdd">
           <span class="button__text">Добавить</span>
         </button>
        </div>
@@ -41,13 +48,6 @@ const hideInput = ref(false)
 .container {
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.input__wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
 }
 
 .add {

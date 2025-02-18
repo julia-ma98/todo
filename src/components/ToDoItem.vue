@@ -5,18 +5,20 @@ defineProps({
     required: true,
   },
 })
+defineEmits( {
+    deleteItem: 'deleteItem',
+    activeItem: 'activeItem',
+})
+
 import { ref } from 'vue'
-// const hideInput = ref(false);
 
 </script>
 
 <template>
   <div class="wrapper">
-    <div v-for="item in items" v-bind:key="item.id">
-<!--      {{ item.message }}-->
-      <div class="input__wrapper">
+    <div class="input__wrapper" v-for="item in items" v-bind:key="item.id">
         <div class="control">
-          <button class="button button_check"><img class="icon" src="./icons/img_3.png" alt="Галочка"></button>
+          <button class="button button_check" :class="{ active: item.active }" @click="$emit('activeItem', item.id)"><img class="icon" src="./icons/img_3.png" alt="Галочка"></button>
         </div>
         <div class="input__control">
           <input type="text" class="input__text" placeholder="напишите задачу">
@@ -28,15 +30,21 @@ import { ref } from 'vue'
           <button class="button button_down"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
         </div>
         <div class="control">
-          <button class="button button_delete"><img class="icon" src="./icons/img.png" alt="Крестик"></button>
+          <button class="button button_delete" @click="$emit('deleteItem', item.id)"><img class="icon" src="./icons/img.png" alt="Крестик"></button>
         </div>
-      </div>
     </div>
   </div>
 
 </template>
 
 <style scoped>
+.input__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
 .input__control {
   position: relative;
 }
@@ -83,6 +91,10 @@ import { ref } from 'vue'
 
 .button_check:focus {
     border: 1px solid rgba(251, 251, 251, 0.98);
+}
+
+.active {
+  background-color: green;
 }
 
 .button_up {
