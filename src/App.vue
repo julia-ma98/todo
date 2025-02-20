@@ -4,7 +4,6 @@ import HelloWorld from './components/HelloWorld.vue'
 import ToDoItem from '@/components/ToDoItem.vue'
 import ToDoView from '@/views/ToDoView.vue'
 import { ref } from 'vue'
-const todoInputs = ref([])
 const todoItems = ref([])
 const handleAdd = () => {
   todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "asdsad", active: false}]
@@ -14,6 +13,18 @@ const handleDelete = (id) => {
 }
 const handleActive = (id) => {
   todoItems.value = [...todoItems.value].map((item) => item.id === id ? {...item, active: !item.active} : item)
+}
+const handleUp = (id) => {
+  const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
+  if (indexItem > 0) {
+    [todoItems.value[indexItem], todoItems.value[indexItem - 1]] = [todoItems.value[indexItem - 1], todoItems.value[indexItem]]
+  }
+};
+const handleDown = (id) => {
+  const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
+  if (indexItem < todoItems.value.length - 1) {
+    [todoItems.value[indexItem], todoItems.value[indexItem + 1]] = [todoItems.value[indexItem + 1], todoItems.value[indexItem]]
+  }
 }
 </script>
 
@@ -33,7 +44,7 @@ const handleActive = (id) => {
 
 <!--  <RouterView />-->
   <div class="container">
-      <to-do-item  :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive"/>
+      <to-do-item  :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown"/>
       <div class="add">
         <button class="button button_add" @click="handleAdd">
           <span class="button__text">Добавить</span>

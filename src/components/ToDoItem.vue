@@ -8,6 +8,8 @@ defineProps({
 defineEmits( {
     deleteItem: 'deleteItem',
     activeItem: 'activeItem',
+    upItem: 'upItem',
+    downItem: 'downItem',
 })
 
 import { ref } from 'vue'
@@ -24,10 +26,10 @@ import { ref } from 'vue'
           <input type="text" class="input__text" placeholder="напишите задачу">
         </div>
         <div class="control">
-          <button class="button button_up"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
+          <button class="button button_up" @click="$emit('upItem', item.id)"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
         </div>
         <div class="control">
-          <button class="button button_down"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
+          <button class="button button_down" @click="$emit('downItem', item.id)"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
         </div>
         <div class="control">
           <button class="button button_delete" @click="$emit('deleteItem', item.id)"><img class="icon" src="./icons/img.png" alt="Крестик"></button>
@@ -94,7 +96,11 @@ import { ref } from 'vue'
 }
 
 .active {
-  background-color: green;
+  background-color: rgba(74, 230, 74, 0.77);
+}
+
+.active:hover {
+  background-color: rgba(74, 230, 74, 0.77);
 }
 
 .button_up {
