@@ -6,9 +6,10 @@ import ToDoView from '@/views/ToDoView.vue'
 import { ref } from 'vue'
 const todoItems = ref([]);
 const tasks = ref([]);
+const addedTasks = ref([]);
 const newTask = ref('');
 const handleAdd = () => {
-  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false}]
+  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false, text: ''}]
 }
 const handleDelete = (id) => {
   todoItems.value = [...todoItems.value].filter((item) => item.id !== id)
@@ -31,8 +32,18 @@ const handleDown = (id) => {
 };
 
  const handleAddTask = (id) => {
-   tasks.value = [...tasks.value, {id: tasks.value.length, name: 'task'}];
-   handleDelete(id);
+   const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
+   if(indexItem !== -1) {
+     addedTasks.value = [...addedTasks.value, tasks.value[indexItem]];
+     handleDelete(id);
+   }
+  }
+
+  const handleChangeText = (id, newText) => {
+    const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
+    if (indexItem !== -1) {
+      todoItems.value[indexItem]['text'] = newText
+    }
   }
 
 </script>
@@ -54,14 +65,14 @@ const handleDown = (id) => {
 <!--  <RouterView />-->
   <div class="container">
       <to-do-item
-        v-model="newTask" :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @addItem="handleAddTask"/>
+        :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask"/>
       <div class="add">
         <button class="button button_add" @click="handleAdd">
           <span class="button__text">Добавить</span>
         </button>
        </div>
     <ul class="tasks">
-      <li v-for="(task, id) in tasks" :key="task.id">{{newTask}}</li>
+      <li v-for="(task, id) in addedTasks" :key="task.id">{{task}}</li>
     </ul>
   <to-do-view />
     </div>
