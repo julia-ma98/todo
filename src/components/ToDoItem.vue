@@ -4,13 +4,17 @@ defineProps({
     type: Array,
     required: true,
   },
+
 })
 defineEmits( {
     deleteItem: 'deleteItem',
     activeItem: 'activeItem',
     upItem: 'upItem',
     downItem: 'downItem',
+    addItem: 'addItem',
 })
+const task = defineModel()
+
 
 import { ref } from 'vue'
 
@@ -22,9 +26,9 @@ import { ref } from 'vue'
         <div class="control">
           <button class="button button_check" :class="{ active: item.active }" @click="$emit('activeItem', item.id)"><img class="icon" src="./icons/img_3.png" alt="Галочка"></button>
         </div>
-        <div class="input__control">
-          <input type="text" class="input__text" placeholder="напишите задачу">
-        </div>
+        <form @submit.prevent class="input__control">
+          <input v-model="task" @keyup.enter="$emit('addItem', item.id)" type="text" class="input__text" placeholder="напишите задачу">
+        </form>
         <div class="control">
           <button class="button button_up" @click="$emit('upItem', item.id)"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
         </div>
@@ -45,6 +49,7 @@ import { ref } from 'vue'
   align-items: center;
   justify-content: center;
   position: relative;
+  margin-bottom: 10px;
 }
 
 .input__control {

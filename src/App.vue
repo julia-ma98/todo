@@ -4,15 +4,18 @@ import HelloWorld from './components/HelloWorld.vue'
 import ToDoItem from '@/components/ToDoItem.vue'
 import ToDoView from '@/views/ToDoView.vue'
 import { ref } from 'vue'
-const todoItems = ref([])
+const todoItems = ref([]);
+const tasks = ref([]);
+const newTask = ref('');
 const handleAdd = () => {
-  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "asdsad", active: false}]
+  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false}]
 }
 const handleDelete = (id) => {
   todoItems.value = [...todoItems.value].filter((item) => item.id !== id)
 }
 const handleActive = (id) => {
   todoItems.value = [...todoItems.value].map((item) => item.id === id ? {...item, active: !item.active} : item)
+
 }
 const handleUp = (id) => {
   const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
@@ -25,7 +28,13 @@ const handleDown = (id) => {
   if (indexItem < todoItems.value.length - 1) {
     [todoItems.value[indexItem], todoItems.value[indexItem + 1]] = [todoItems.value[indexItem + 1], todoItems.value[indexItem]]
   }
-}
+};
+
+ const handleAddTask = (id) => {
+   tasks.value = [...tasks.value, {id: tasks.value.length, name: 'task'}];
+   handleDelete(id);
+  }
+
 </script>
 
 <template>
@@ -44,12 +53,16 @@ const handleDown = (id) => {
 
 <!--  <RouterView />-->
   <div class="container">
-      <to-do-item  :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown"/>
+      <to-do-item
+        v-model="newTask" :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @addItem="handleAddTask"/>
       <div class="add">
         <button class="button button_add" @click="handleAdd">
           <span class="button__text">Добавить</span>
         </button>
        </div>
+    <ul class="tasks">
+      <li v-for="(task, id) in tasks" :key="task.id">{{newTask}}</li>
+    </ul>
   <to-do-view />
     </div>
 
