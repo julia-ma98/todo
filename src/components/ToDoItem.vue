@@ -4,7 +4,14 @@ defineProps({
     type: Array,
     required: true,
   },
-
+  tooltipVisible: {
+    type: Boolean,
+    required: true,
+  },
+  tooltipMsg: {
+    type: String,
+    required: true,
+  },
 })
 defineEmits( {
     deleteItem: 'deleteItem',
@@ -13,8 +20,9 @@ defineEmits( {
     downItem: 'downItem',
     changeItemText: 'changeItemText',
     addItem: 'addItem',
+    textDanger: 'textDanger',
 })
-const task = defineModel()
+
 
 
 import { ref } from 'vue'
@@ -23,23 +31,26 @@ import { ref } from 'vue'
 
 <template>
   <div class="wrapper">
-    <div class="input__wrapper" v-for="item in items" v-bind:key="item.id">
+    <div class="input__wrapper" v-for="(item, index) in items" v-bind:key="item.id">
         <div class="control">
           <button class="button button_check" :class="{ active: item.active }" @click="$emit('activeItem', item.id)"><img class="icon" src="./icons/img_3.png" alt="Галочка"></button>
         </div>
         <form @submit.prevent class="input__control">
+          <div v-if="tooltipVisible" :key="item.id" class="tooltip__bubble">{{tooltipMsg}}</div>
           <input
-            @keyup.enter="$emit('addItem', item.id)"
-            @keyup="$emit('changeItemText', item.id, $event.value)"
+            :class="{ textDanger: item.textDanger }"
+            @keyup.enter="$emit('addItem', item.id, 'textDanger', item.id)"
+            @keyup="$emit('changeItemText', item.id, $event.target.value)"
             type="text"
             class="input__text"
-            placeholder="напишите задачу">
+            placeholder="напишите задачу"
+          />
         </form>
         <div class="control">
-          <button class="button button_up" @click="$emit('upItem', item.id)"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
+          <button class="button button_up" :disabled="index===0" @click="$emit('upItem', item.id)"><img class="icon" src="./icons/img_2.png" alt="Стрелка вверх"></button>
         </div>
         <div class="control">
-          <button class="button button_down" @click="$emit('downItem', item.id)"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
+          <button class="button button_down" :disabled="index===(items.length - 1)" @click="$emit('downItem', item.id)"><img class="icon" src="./icons/img_1.png" alt="Стрелка вниз"></button>
         </div>
         <div class="control">
           <button class="button button_delete" @click="$emit('deleteItem', item.id)"><img class="icon" src="./icons/img.png" alt="Крестик"></button>
@@ -112,6 +123,38 @@ import { ref } from 'vue'
 
 .active:hover {
   background-color: rgba(74, 230, 74, 0.77);
+}
+
+
+.textDanger {
+  border: 1px solid rgba(237, 5, 5, 0.66);
+}
+
+.tooltip__bubble {
+  padding: 13px 21px 8px 21px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  text-align: center;
+  color: rgba(14, 1, 1, 0.71);
+  background-color: rgba(186, 198, 250, 0.76);
+  border-radius: 10px;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.tooltip__bubble:before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 10px solid transparent;
+  border-top-color: rgba(186, 198, 250, 0.76);
 }
 
 .button_up {

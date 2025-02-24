@@ -3,20 +3,21 @@ import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import ToDoItem from '@/components/ToDoItem.vue'
 import ToDoView from '@/views/ToDoView.vue'
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 const todoItems = ref([]);
 const tasks = ref([]);
 const addedTasks = ref([]);
 const newTask = ref('');
+let showTooltip = ref(false);
+const message = ref('Введите текст');
 const handleAdd = () => {
-  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false, text: ''}]
+  todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false, text: '', showTooltip: false, message: 'Введите текст'}]
 }
 const handleDelete = (id) => {
   todoItems.value = [...todoItems.value].filter((item) => item.id !== id)
 }
 const handleActive = (id) => {
   todoItems.value = [...todoItems.value].map((item) => item.id === id ? {...item, active: !item.active} : item)
-
 }
 const handleUp = (id) => {
   const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
@@ -31,20 +32,56 @@ const handleDown = (id) => {
   }
 };
 
- const handleAddTask = (id) => {
-   const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
-   if(indexItem !== -1) {
-     addedTasks.value = [...addedTasks.value, tasks.value[indexItem]];
-     handleDelete(id);
-   }
-  }
+const handleErr = (id) => {
+  todoItems.value = [...todoItems.value].map((item) => item.id === id ? {...item, textDanger: !item.textDanger} : item)
+}
 
-  const handleChangeText = (id, newText) => {
+ const handleAddTask = (id) => {
+   try {
+   const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
+     if (indexItem === -1) {
+       throw new Error('Задача не найдена');
+     }
+     const task = todoItems.value[indexItem]
+     if (!task.text) {
+       showTooltip.value = true;
+       setTimeout(() => {
+       showTooltip.value = false;
+       }, 3000);
+       throw new Error('Пустое поле задачи');
+     }
+     addedTasks.value = [...addedTasks.value, task];
+     handleDelete(id);
+   } catch (error) {
+     console.error('Ошибка при добавлении задачи:', error.message);
+     handleErr(id)
+   }
+ }
+
+const handleChangeText = (id, newText) => {
     const indexItem = [...todoItems.value].findIndex((item) => item.id === id);
     if (indexItem !== -1) {
       todoItems.value[indexItem]['text'] = newText
     }
   }
+  const activeTasks = computed(() => {
+    return todoItems.value.reduce((acc, currentValue) => {
+      if (currentValue.active) {
+        acc = acc+1
+      }
+      return acc;
+    },0)
+    }
+  )
+
+watch(activeTasks, (newCount) => {
+  console.log('Изменилось количество активных задач:', newCount);
+});
+
+watch(addedTasks, (newItems) => {
+  console.log('Добавлена новая задача', newItems);
+  localStorage.setItem('addedTasks', JSON.stringify(newItems));
+}, { deep: true });
 
 </script>
 
@@ -64,16 +101,18 @@ const handleDown = (id) => {
 
 <!--  <RouterView />-->
   <div class="container">
-      <to-do-item
-        :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask"/>
+      <to-do-item :tooltip-visible="showTooltip"
+                  :tooltip-msg="message"
+        :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask" @textDanger="handleErr"/>
       <div class="add">
         <button class="button button_add" @click="handleAdd">
           <span class="button__text">Добавить</span>
         </button>
        </div>
     <ul class="tasks">
-      <li v-for="(task, id) in addedTasks" :key="task.id">{{task}}</li>
+      <li v-for="task in addedTasks" :key="task.id">{{ task.text }}</li>
     </ul>
+    <span class="activeTask">Количество активных задач {{activeTasks}}</span>
   <to-do-view />
     </div>
 
@@ -117,6 +156,16 @@ const handleDown = (id) => {
   color: #4c4a4a;
   font-size: 20px;
   font-weight: bold;
+}
+
+.activeTask {
+  font-size: 20px;
+  font-weight: bold;
+  color: rgba(37, 14, 14, 0.69);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
 }
 
 header {
