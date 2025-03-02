@@ -22,11 +22,6 @@ defineEmits( {
     addItem: 'addItem',
     textDanger: 'textDanger',
 })
-
-
-
-import { ref } from 'vue'
-
 </script>
 
 <template>
@@ -44,6 +39,7 @@ import { ref } from 'vue'
             type="text"
             class="input__text"
             placeholder="напишите задачу"
+            :value="item.text"
           />
         </form>
         <div class="control">

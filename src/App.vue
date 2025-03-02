@@ -1,15 +1,17 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { computed, ref, watch, onMounted } from 'vue'
+
 import ToDoItem from '@/components/ToDoItem.vue'
-import ToDoView from '@/views/ToDoView.vue'
-import { computed, ref, watch } from 'vue'
+import ModalItem from '@/components/ModalItem.vue'
+import AddedTaskSlot from '@/components/AddedTaskSlot.vue'
+import Notification from '@/components/Notification.vue'
+
 const todoItems = ref([]);
-const tasks = ref([]);
 const addedTasks = ref([]);
-const newTask = ref('');
 let showTooltip = ref(false);
+let showModal = ref(false);
 const message = ref('Введите текст');
+let showNotification = ref(false);
 const handleAdd = () => {
   todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false, text: '', showTooltip: false, message: 'Введите текст'}]
 }
@@ -51,6 +53,7 @@ const handleErr = (id) => {
        throw new Error('Пустое поле задачи');
      }
      addedTasks.value = [...addedTasks.value, task];
+     handleShowNotification()
      handleDelete(id);
    } catch (error) {
      console.error('Ошибка при добавлении задачи:', error.message);
@@ -78,47 +81,121 @@ watch(activeTasks, (newCount) => {
   console.log('Изменилось количество активных задач:', newCount);
 });
 
-watch(addedTasks, (newItems) => {
-  console.log('Добавлена новая задача', newItems);
-  localStorage.setItem('addedTasks', JSON.stringify(newItems));
+watch(todoItems, () => {
+  console.log('Добавлена новая задача', todoItems.value);
+  localStorage.setItem('todoItems', JSON.stringify(todoItems.value));
 }, { deep: true });
+
+onMounted(() => {
+  console.log('the component is now mounted.')
+  const tasks = localStorage.getItem('todoItems')
+  if (tasks !== null) {
+    console.log(tasks);
+    console.log(JSON.parse(tasks));
+    todoItems.value = JSON.parse(tasks)
+  }
+})
+
+watch(addedTasks, () => {
+  console.log('Добавлена новая задача', addedTasks.value);
+  localStorage.setItem('addedTasks', JSON.stringify(addedTasks.value));
+}, { deep: true });
+
+onMounted(() => {
+  const tasks = localStorage.getItem('addedTasks')
+  if (tasks !== null) {
+    addedTasks.value = JSON.parse(tasks)
+  }
+})
+
+const completedTask = computed(() => {
+    return addedTasks.value.reduce((acc, currentValue) => {
+      return acc = acc+1
+    },0)
+  }
+)
+
+const handleDeleteAll = (id) => {
+  addedTasks.value.splice(0, addedTasks.value.length);
+  showModal.value = false;
+}
+
+const handleCanсelDelete = (id) => {
+  showModal.value = false;
+  console.log('Удаление задач отменено')
+}
+
+const handleModal = () => {
+  showModal.value = true;
+}
+
+const handleClosedNotification = () => {
+  showNotification.value = false;
+}
+
+const handleShowNotification = () => {
+  showNotification.value = true;
+  setInterval(() => {
+    showNotification.value = false;
+  },4000)
+}
 
 </script>
 
 <template>
-<!--  <header>-->
-<!--    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />-->
-
-<!--    <div class="wrapper">-->
-<!--      <HelloWorld msg="You did it!" />-->
-
-<!--      <nav>-->
-<!--        <RouterLink to="/">Home</RouterLink>-->
-<!--        <RouterLink to="/about">About</RouterLink>-->
-<!--      </nav>-->
-<!--    </div>-->
-<!--  </header>-->
-
-<!--  <RouterView />-->
   <div class="container">
       <to-do-item :tooltip-visible="showTooltip"
                   :tooltip-msg="message"
         :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask" @textDanger="handleErr"/>
       <div class="add">
         <button class="button button_add" @click="handleAdd">
-          <span class="button__text">Добавить</span>
+          <span class="button__text">Добавить задачу</span>
         </button>
-       </div>
     <ul class="tasks">
-      <li v-for="task in addedTasks" :key="task.id">{{ task.text }}</li>
+      <added-task-slot v-for="task in addedTasks" :key="task.id" class="task"><template #header> 🌸 </template>
+        <template #default> {{task.text}} </template>
+        <template #footer>. </template></added-task-slot>
     </ul>
+    <button class="button button__deleteAll" @click="handleModal" :disabled="addedTasks.length === 0">Удалить все</button>
     <span class="activeTask">Количество активных задач {{activeTasks}}</span>
-  <to-do-view />
+    <span class="completedTask">Количество завершенных задач {{completedTask}}</span>
+      </div>
+  <transition><modal-item v-if="showModal" @deleteAllTask="handleDeleteAll" @cancelDeletion="handleCanсelDelete"/></transition>
     </div>
-
+  <teleport to="#teleport-target">
+  <transition name="notification"><notification v-if="showNotification" @closedNotification="handleClosedNotification"/></transition>
+  </teleport>
 </template>
 
 <style scoped>
+
+.notification-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.notification-enter-active {
+  transition: all 0.8s ease-out;
+}
+
+.notification-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.notification-enter, .notification-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -129,6 +206,7 @@ watch(addedTasks, (newItems) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 .button_add {
@@ -151,14 +229,52 @@ watch(addedTasks, (newItems) => {
   align-items: center;
 }
 
+.tasks {
+  align-self: flex-start;
+  font-size: 20px;
+}
+
+.task {
+  margin-top: 20px;
+  list-style: none;
+  padding: 4px 7px 2px 7px;
+  border-bottom: 1px solid #010201;
+}
+
+
+.button__deleteAll {
+  margin-top: 20px;
+  background-color: rgba(227, 40, 72, 0.65);
+  border-radius: 5px;
+  border: 1px solid rgba(243, 25, 63, 0.55);
+  line-height: 20px;
+  color: #0e0404;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.button__deleteAll:hover {
+  background-color: rgba(236, 7, 41, 0.87);
+}
+
 .button__text {
   line-height: 20px;
-  color: #4c4a4a;
+  color: #0e0404;
   font-size: 20px;
   font-weight: bold;
 }
 
 .activeTask {
+  font-size: 20px;
+  font-weight: bold;
+  color: rgba(37, 14, 14, 0.69);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.completedTask {
   font-size: 20px;
   font-weight: bold;
   color: rgba(37, 14, 14, 0.69);
@@ -208,16 +324,6 @@ nav a:first-of-type {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
   }
 
   nav {
