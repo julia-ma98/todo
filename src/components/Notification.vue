@@ -19,16 +19,17 @@
   justify-content: flex-start;
   background-color: #fbfbfb;
   width: 220px;
-  height: 70px;
+  height: 80px;
   border-radius: 6px;
   border: 1px solid #bf18d1;
   position: relative;
   top: 230px;
-
+  background-image: url("./icons/ph-not.gif");
 }
 .notification__text {
   text-align: center;
   font-size: 20px;
+  padding: 5px;
 }
 
 .notification__closed {

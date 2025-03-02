@@ -103,10 +103,14 @@ defineEmits( {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border: 1px solid rgba(219, 220, 219, 0.55);
+  background-image: url("./icons/ph13.gif");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .button_check:hover {
   background-color: rgba(249, 250, 249, 0.86);
+  background-image: url("./icons/ph14.gif");
 }
 
 .button_check:focus {
@@ -115,10 +119,12 @@ defineEmits( {
 
 .active {
   background-color: rgba(74, 230, 74, 0.77);
+  background-image: url("./icons/ph16.gif");
 }
 
 .active:hover {
   background-color: rgba(74, 230, 74, 0.77);
+  background-image: url("./icons/ph17.gif");
 }
 
 
@@ -157,10 +163,12 @@ defineEmits( {
   background-color: rgba(109, 134, 234, 0.55);
   border: 1px solid rgba(109, 134, 234, 0.55);
   border-right: none;
+  background-image: url("./icons/ph8.gif");
 }
 
 .button_up:hover {
   background-color: rgba(109, 134, 234, 0.83);
+  background-image: url("./icons/ph9.gif");
 }
 
 .button_up:focus {
@@ -171,10 +179,12 @@ defineEmits( {
   background-color: rgba(109, 134, 234, 0.55);
   border: 1px solid rgba(109, 134, 234, 0.55);
   border-right: none;
+  background-image: url("./icons/ph11.gif");
 }
 
 .button_down:hover {
   background-color: rgba(109, 134, 234, 0.83);
+  background-image: url("./icons/ph9.gif");
 }
 
 .button_down:focus {
@@ -182,14 +192,15 @@ defineEmits( {
 }
 
 .button_delete {
-  background-color: rgba(243, 25, 63, 0.55);
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   border: 1px solid rgba(243, 25, 63, 0.55);
+  background-image: url("./icons/ph_but_clos.gif");
 }
 
 .button_delete:hover {
   background-color: rgba(243, 25, 63, 0.79);
+  background-image: url("./icons/ph12.gif");
 }
 
 .button_delete:focus {

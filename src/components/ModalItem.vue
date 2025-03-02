@@ -64,6 +64,7 @@ onUnmounted(() => {
 }
 
 .modal__content {
+  background-image: url("./icons/ph-mod.jpg");
   padding: 30px 40px 33px 40px;
   position: absolute;
   top: 50%;
@@ -71,8 +72,8 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   z-index: 2;
   width: 30%;
-  background: rgb(255, 255, 255);
   border-radius: 8px;
+  border: 3px solid plum;
 }
 
 .modal__header {
@@ -107,26 +108,33 @@ onUnmounted(() => {
   border: none;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 600;
 }
 
 .button_delete {
   background-color: rgba(255, 4, 4, 0.73);
   border: 1px solid #050000;
   border-radius: 4px;
+  background-image: url("./icons/ph_but_clos.gif");
 }
 
 .button_delete:hover {
   background-color: rgb(232, 11, 11);
+  background-image: url("./icons/ph12.gif");
 }
 
 .button_cancel {
   background-color: white;
   border: 1px solid #040000;
   border-radius: 4px;
+  background-image: url("./icons/ph13.gif");
 }
 
 .button_cancel:hover {
   background-color: rgba(202, 202, 202, 0.7);
+  background-image: url("./icons/ph14.gif");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 </style>

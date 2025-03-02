@@ -213,10 +213,12 @@ const handleShowNotification = () => {
   background-color: rgba(59, 241, 39, 0.55);
   border-radius: 5px;
   border: 1px solid #1c670e;
+  background-image: url("./components/icons/stars-pink.gif");
 }
 
 .button_add:hover {
   background-color: rgba(59, 241, 39, 0.83);
+  background-image: url("./components/icons/ph4.gif");
 }
 
 .button {
@@ -251,10 +253,14 @@ const handleShowNotification = () => {
   color: #0e0404;
   font-size: 20px;
   font-weight: bold;
+  background-image: url("./components/icons/picmix.com_1549570.gif");
 }
 
 .button__deleteAll:hover {
   background-color: rgba(236, 7, 41, 0.87);
+  background-image: url("./components/icons/mark.gif");
+  background-repeat: no-repeat;
+  background-position: right;
 }
 
 .button__text {
