@@ -22,6 +22,7 @@ defineEmits( {
     addItem: 'addItem',
     textDanger: 'textDanger',
 })
+
 </script>
 
 <template>

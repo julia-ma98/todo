@@ -10,8 +10,10 @@ const todoItems = ref([]);
 const addedTasks = ref([]);
 let showTooltip = ref(false);
 let showModal = ref(false);
+let notification_msg = ref('')
 const message = ref('Введите текст');
 let showNotification = ref(false);
+const notificationType = ref({ success: false, error: false });
 const handleAdd = () => {
   todoItems.value = [...todoItems.value, {id: todoItems.value.length, name: "item", active: false, text: '', showTooltip: false, message: 'Введите текст'}]
 }
@@ -47,12 +49,18 @@ const handleErr = (id) => {
      const task = todoItems.value[indexItem]
      if (!task.text) {
        showTooltip.value = true;
+       notification_msg.value = 'Пустое поле задачи ⚠️⚠️⚠️'
+       notificationType.value = { success: false, error: true };
+       handleShowNotification()
+
        setTimeout(() => {
        showTooltip.value = false;
        }, 3000);
        throw new Error('Пустое поле задачи');
      }
      addedTasks.value = [...addedTasks.value, task];
+     notificationType.value = { success: true, error: false };
+     notification_msg.value = 'Задача добавлена в завершенные!🌸';
      handleShowNotification()
      handleDelete(id);
    } catch (error) {
@@ -144,6 +152,7 @@ const handleShowNotification = () => {
 
 <template>
   <div class="container">
+    <div class="todo__title"> <img src="./components/icons/ph-heart.gif" alt="heart">Список задач<img src="./components/icons/ph-heart.gif" alt="heart"></div>
       <to-do-item :tooltip-visible="showTooltip"
                   :tooltip-msg="message"
         :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask" @textDanger="handleErr"/>
@@ -163,11 +172,20 @@ const handleShowNotification = () => {
   <transition><modal-item v-if="showModal" @deleteAllTask="handleDeleteAll" @cancelDeletion="handleCanсelDelete"/></transition>
     </div>
   <teleport to="#teleport-target">
-  <transition name="notification"><notification v-if="showNotification" @closedNotification="handleClosedNotification"/></transition>
+  <transition name="notification"><notification :notification="notificationType" v-if="showNotification" :message_notification="notification_msg" @closedNotification="handleClosedNotification"/></transition>
   </teleport>
 </template>
 
 <style scoped>
+.todo__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  font-size: 50px;
+  color: #4c3159;
+  height: 70px;
+}
 
 .notification-enter-from {
   opacity: 0;
@@ -202,7 +220,7 @@ const handleShowNotification = () => {
 }
 
 .add {
-  margin-top: 60px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +305,7 @@ const handleShowNotification = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 header {
