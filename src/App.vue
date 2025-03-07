@@ -1,12 +1,14 @@
 <script setup>
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, ref, watch, onMounted, defineAsyncComponent } from 'vue'
 
 import ToDoItem from '@/components/ToDoItem.vue'
-import ModalItem from '@/components/ModalItem.vue'
 import AddedTaskSlot from '@/components/AddedTaskSlot.vue'
 import Notification from '@/components/Notification.vue'
 
 const todoItems = ref([]);
+const ModalItem = defineAsyncComponent(
+  () => import('./components/ModalItem.vue'),
+)
 const addedTasks = ref([]);
 let showTooltip = ref(false);
 let showModal = ref(false);
@@ -155,7 +157,7 @@ const handleShowNotification = () => {
     <div class="todo__title"> <img src="./components/icons/ph-heart.gif" alt="heart">Список задач<img src="./components/icons/ph-heart.gif" alt="heart"></div>
       <to-do-item :tooltip-visible="showTooltip"
                   :tooltip-msg="message"
-        :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask" @textDanger="handleErr"/>
+                  :items="todoItems" @deleteItem="handleDelete" @activeItem="handleActive" @upItem="handleUp" @downItem="handleDown" @changeItemText="handleChangeText" @addItem="handleAddTask" @textDanger="handleErr"/>
       <div class="add">
         <button class="button button_add" @click="handleAdd">
           <span class="button__text">Добавить задачу</span>
@@ -169,7 +171,7 @@ const handleShowNotification = () => {
     <span class="activeTask">Количество активных задач {{activeTasks}}</span>
     <span class="completedTask">Количество завершенных задач {{completedTask}}</span>
       </div>
-  <transition><modal-item v-if="showModal" @deleteAllTask="handleDeleteAll" @cancelDeletion="handleCanсelDelete"/></transition>
+  <transition><ModalItem v-if="showModal" @deleteAllTask="handleDeleteAll" @cancelDeletion="handleCanсelDelete"/></transition>
     </div>
   <teleport to="#teleport-target">
   <transition name="notification"><notification :notification="notificationType" v-if="showNotification" :message_notification="notification_msg" @closedNotification="handleClosedNotification"/></transition>
@@ -214,6 +216,7 @@ const handleShowNotification = () => {
 .v-leave-to {
   opacity: 0;
 }
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

@@ -2,12 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 let intervalId = ref(null)
 
-defineProps({
-  modalVisible: {
-    type: Boolean,
-    required: true,
-  },
-})
+
 
 defineEmits( {
   deleteAllTask: 'deleteAllTask',
